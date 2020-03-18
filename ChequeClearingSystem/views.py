@@ -55,31 +55,35 @@ class LoginFormView(View):
                     return render(request, 'ChequeClearingSystem/logout.html', {'form': form})
         return render(request, 'ChequeClearingSystem/login.html', {'form': form})
 
+
 def logout_view(request):
     logout(request)
     print("logout")
     return redirect('ChequeClearingSystem:main')
 
+
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
+
+
 def createAccountHolder(request):
     print("ajnakn")
     if not request.user.is_authenticated:
-        return render(request,'ChequeClearingSystem/login.html')
+        return render(request, 'ChequeClearingSystem/login.html')
     else:
-        form = AccountRegister(request.POST or None,request.FILES or None)
+        form = AccountRegister(request.POST or None, request.FILES or None)
         if form.is_valid():
-            accountHolder=form.save(commit=False)
-            accountHolder.user=request.user
-            accountHolder.accountNumber=form.cleaned_data['accountNumber']
-            accountHolder.full_name=form.cleaned_data['full_name']
-            accountHolder.gender=form.cleaned_data['gender']
+            accountHolder = form.save(commit=False)
+            accountHolder.user = request.user
+            accountHolder.accountNumber = form.cleaned_data['accountNumber']
+            accountHolder.full_name = form.cleaned_data['full_name']
+            accountHolder.gender = form.cleaned_data['gender']
             accountHolder.fatherName = form.cleaned_data['fatherName']
             accountHolder.motherName = form.cleaned_data['motherName']
-            accountHolder.ifsc=form.cleaned_data['ifsc']
-            accountHolder.pan=form.cleaned_data['pan']
+            accountHolder.ifsc = form.cleaned_data['ifsc']
+            accountHolder.pan = form.cleaned_data['pan']
             accountHolder.contactNumber = form.cleaned_data['contactNumber']
             accountHolder.email = form.cleaned_data['email']
-            accountHolder.dateOfBirth=form.cleaned_data['dateOfBirth']
+            accountHolder.dateOfBirth = form.cleaned_data['dateOfBirth']
             accountHolder.profilePicture = request.FILES['profilePicture']
             file_type = accountHolder.profilePicture.url.split('.')[-1]
             file_type = file_type.lower()

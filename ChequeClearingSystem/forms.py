@@ -17,9 +17,10 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
     fields = ['username', 'password']
 
+
 class AccountRegister(forms.ModelForm):
     class Meta:
-        model=AccountHolder
-        fields=['accountNumber','full_name','gender','fatherName','motherName','email','ifsc','pan','contactNumber',
-    'profilePicture','dateOfBirth']
-
+        model = AccountHolder
+        fields = ['accountNumber', 'full_name', 'gender', 'fatherName', 'motherName', 'email', 'ifsc', 'pan',
+                  'contactNumber',
+                  'profilePicture', 'dateOfBirth']
