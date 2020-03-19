@@ -19,8 +19,12 @@ class LoginForm(forms.Form):
 
 
 class AccountRegister(forms.ModelForm):
+    signature = forms.FileField(widget=forms.FileInput())
+    email = forms.EmailField(widget=forms.EmailInput())
+    dateOfBirth = forms.DateField(widget=forms.SelectDateWidget())
+
     class Meta:
         model = AccountHolder
         fields = ['accountNumber', 'full_name', 'gender', 'fatherName', 'motherName', 'email', 'ifsc', 'pan',
                   'contactNumber',
-                  'profilePicture', 'dateOfBirth']
+                  'profilePicture', 'dateOfBirth', 'signature']

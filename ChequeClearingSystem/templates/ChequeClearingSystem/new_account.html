@@ -22,6 +22,13 @@
                                 </div>
                             </div>
                         </form>
+                        <form>
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success"
+                                    formaction="{% url 'ChequeClearingSystem:profile' %}">
+                                Back to profile
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

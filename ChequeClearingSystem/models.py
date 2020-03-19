@@ -17,6 +17,7 @@ class AccountHolder(models.Model):
     pan = models.CharField(max_length=10)
     contactNumber = models.IntegerField()
     profilePicture = models.FileField(default='images/male_profile.png')
+    signature = models.FileField(default='images/female.jpg')
     dateOfBirth = models.DateField(default=d)
 
     def __str__(self):

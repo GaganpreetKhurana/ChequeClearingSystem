@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views.generic import View
-
+from django.contrib.auth.decorators import login_required
 from .forms import UserForm, LoginForm, AccountRegister
 
 
@@ -56,6 +56,7 @@ class LoginFormView(View):
         return render(request, 'ChequeClearingSystem/login.html', {'form': form})
 
 
+@login_required(login_url='/main')
 def logout_view(request):
     logout(request)
     print("logout")
@@ -65,8 +66,8 @@ def logout_view(request):
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 
+@login_required(login_url='/main')
 def createAccountHolder(request):
-    print("ajnakn")
     if not request.user.is_authenticated:
         return render(request, 'ChequeClearingSystem/login.html')
     else:
@@ -85,9 +86,12 @@ def createAccountHolder(request):
             accountHolder.email = form.cleaned_data['email']
             accountHolder.dateOfBirth = form.cleaned_data['dateOfBirth']
             accountHolder.profilePicture = request.FILES['profilePicture']
+            accountHolder.signature = request.FILES['signature']
             file_type = accountHolder.profilePicture.url.split('.')[-1]
             file_type = file_type.lower()
-            if file_type not in IMAGE_FILE_TYPES:
+            file_type_sign = accountHolder.signature.url.split('.')[-1]
+            file_type_sign = file_type_sign.lower()
+            if file_type not in IMAGE_FILE_TYPES or file_type_sign not in IMAGE_FILE_TYPES:
                 context = {
                     'accountHolder': accountHolder,
                     'form': form,
