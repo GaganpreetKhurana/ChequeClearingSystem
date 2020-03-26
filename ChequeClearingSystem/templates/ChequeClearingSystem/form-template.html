@@ -1,9 +1,13 @@
 {% for field in form %}
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <span class="text-danger small">{{ field.errors }}</span>
-        </div>
-        <label class="control-label col-sm-2">{{ field.label_tag }}</label>
-        <div class="col-sm-10">{{ field }}</div>
+    {#    <div class="box">#}
+    {#        <div class="col-sm-offset-2 col-sm-10">#}
+    {#            <span class="text-danger small">{{ field.errors }}</span>#}
+    {#        </div>#}
+    {#        <label class="control-label col-sm-2">{{ field.label_tag }}</label>#}
+    <div class="inputBox">
+        {{ field }}
+        <label>{{ field.label }}</label>
     </div>
+    {#    </div>#}
 {% endfor %}
+{#<tr><th><label for="id_username">Username:</label></th><td><input type="text" name="username" placeholder="Username" required id="id_username"></td></tr>#}

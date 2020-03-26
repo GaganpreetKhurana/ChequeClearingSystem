@@ -2,29 +2,24 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12 col-md-7">
-                <div class="panel panel-default">
-                    <h3>Create New Account</h3>
-                    {% if error_message %}
-                        <p><strong>{{ error_message }}</strong></p>
-                    {% endif %}
-                    <div class="panel-body">
-                        <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {% include 'ChequeClearingSystem/form-template.html' %}
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-success">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    {#    {% if error_message %}#}
+    {#        <p><strong>{{ error_message }}</strong></p>#}
+    {#    {% endif %}#}
+    <div class="box" id="login">
+        <h2><b>LOGIN</b></h2><br><br><br>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            {% include 'ChequeClearingSystem/form-template.html' %}
+            <div style="text-align: center;">
+                <button type="submit">Register</button>
             </div>
-        </div>
+        </form>
+        <br>
+        <form>
+            <div style="text-align: center;">
+                <button type="submit" formaction="{% url 'ChequeClearingSystem:main' %}">Back to Login</button>
+            </div>
+        </form>
     </div>
 {% endblock %}

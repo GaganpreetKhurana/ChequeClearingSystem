@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-    <title>{% block title %}Wiber{% endblock %}</title>
+    {#        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">#}
+    <link rel="stylesheet" href="{% static 'stylesheet/styles.css' %}" type="text/css">
+    {#    <link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet" type="text/css">#}
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>#}
+    {#    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>#}
+    <script>
+        $(document).ready(function () {
+            $(".menu ul li a").click(function () {
+                $(".menu ul li a").removeClass("active");
+                $(this).addClass("active");
+            });
+        });
+    </script>
+    <title>{% block title %}Cheque Clearing Sy{% endblock %}</title>
 </head>
 <body>
+<div class="container">
+    <div class="tagline">
+        <p><span style="font-size:50px;color: white; "><b>PNB</b></span></p>
+        <h2><span style="color: white; ">PUNJAB &nbsp; NATIONAL &nbsp; BANK</span></h2>
+    </div>
+    <div>
+        <ul class="menu">
+            {% block menuButtons %}
+            {% endblock %}
+        </ul>
+    </div>
+</div>
 {% block body %}
 {% endblock %}
 </body>

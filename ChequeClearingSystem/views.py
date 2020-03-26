@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.contrib.auth.decorators import login_required
-from .forms import UserForm, LoginForm, AccountRegister
+
+from .forms import UserForm, LoginForm, AccountRegister, chequeUpload
+from .models import bearerBank
 
 
 class UserFormView(View):
@@ -29,7 +31,7 @@ class UserFormView(View):
                 if user.is_active:
                     login(request, user)
                     print("login")
-                    return render(request, 'ChequeClearingSystem/logout.html', {'form': form})
+                    return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
 
             return render(request, self.template_name, {'form': form})
 
@@ -52,7 +54,8 @@ class LoginFormView(View):
                 if user.is_active:
                     login(request, user)
                     print("Login")
-                    return render(request, 'ChequeClearingSystem/logout.html', {'form': form})
+                    return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
+
         return render(request, 'ChequeClearingSystem/login.html', {'form': form})
 
 
@@ -99,8 +102,62 @@ def createAccountHolder(request):
                 }
                 return render(request, 'ChequeClearingSystem/new_account.html', context)
             accountHolder.save()
-            return render(request, 'ChequeClearingSystem/details.html', {'accountHolder': accountHolder})
+            return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload})
         context = {
             "form": form,
         }
         return render(request, 'ChequeClearingSystem/new_account.html', context)
+
+
+@login_required(login_url='/main')
+def details(request):
+    if not request.user.is_authenticated:
+        return render(request, 'ChequeClearingSystem/login.html')
+    elif request.GET == True:
+        return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
+
+    else:
+        form = chequeUpload(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            chequeDetails = form.save(commit=False)
+            chequeDetails.accountNumber = form.cleaned_data['accountNumber']
+            chequeDetails.amount = form.cleaned_data['amount']
+            chequeDetails.cheque = request.FILES['cheque']
+            file_type_sign = chequeDetails.cheque.url.split('.')[-1]
+            file_type_sign = file_type_sign.lower()
+            accountHolder = bearerBank.objects.filter(user=request.user)
+            accountNumberUser = list()
+            for accounts in accountHolder:
+                accountNumberUser.append(accounts.accountNumber)
+            if chequeDetails.accountNumber not in accountNumberUser:
+                context = {
+                    'chequeDetails': chequeDetails,
+                    'form': form,
+                    'error_message': 'No account',
+                }
+                return render(request, 'ChequeClearingSystem/details.html', context)
+            accountHolder = bearerBank.objects.filter(accountNumber=chequeDetails.accountNumber)
+            accountHolder = accountHolder.values()
+            accountHolder = list(accountHolder)
+            accountHolder = accountHolder[0]
+            temp = accountHolder
+            accountHolder = list()
+            for x in temp:
+                accountHolder.append(temp[x])
+
+            accountHolder = bearerBank(*accountHolder)
+            chequeDetails.client = accountHolder
+            if file_type_sign not in IMAGE_FILE_TYPES:
+                context = {
+                    'chequeDetails': chequeDetails,
+                    'form': form,
+                    'error_message': 'Image file must be PNG, JPG, or JPEG',
+                }
+                return render(request, 'ChequeClearingSystem/details.html', context)
+            chequeDetails.save()
+            return render(request, 'ChequeClearingSystem/details.html',
+                          {'chequeDetails': chequeDetails, 'form': chequeUpload()})
+        context = {
+            "form": form
+        }
+        return render(request, 'ChequeClearingSystem/details.html', context)
