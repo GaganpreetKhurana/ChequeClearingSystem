@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from ChequeClearingSystem.models import AccountHolder, bearerBankCheque
+from ChequeClearingSystem.models import bearerBankCheque, bearerBank
 
 
 class UserForm(forms.ModelForm):
@@ -26,16 +26,16 @@ class LoginForm(forms.Form):
     fields = ['username', 'password']
 
 
-class AccountRegister(forms.ModelForm):
-    signature = forms.FileField(widget=forms.FileInput())
-    email = forms.EmailField(widget=forms.EmailInput())
-    dateOfBirth = forms.DateField(widget=forms.SelectDateWidget())
+class AccountRegister(forms.Form):
+    name = forms.CharField(widget=forms.TextInput())
+    fatherName = forms.CharField(widget=forms.TextInput())
+    email = forms.EmailField(widget=forms.EmailInput)
+    contactNumber = forms.IntegerField(widget=forms.NumberInput())
+    accountNumber = forms.IntegerField(widget=forms.NumberInput())
 
     class Meta:
-        model = AccountHolder
-        fields = ['accountNumber', 'full_name', 'gender', 'fatherName', 'motherName', 'email', 'ifsc', 'pan',
-                  'contactNumber',
-                  'profilePicture', 'dateOfBirth', 'signature']
+        model = bearerBank
+        fields = ['accountNumber', 'name', 'fatherName', 'email', 'contactNumber']
 
 
 class chequeUpload(forms.ModelForm):

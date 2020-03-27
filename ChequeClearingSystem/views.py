@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -71,43 +72,61 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 @login_required(login_url='/main')
 def createAccountHolder(request):
+    print('c')
     if not request.user.is_authenticated:
+        print('a')
         return render(request, 'ChequeClearingSystem/login.html')
     else:
-        form = AccountRegister(request.POST or None, request.FILES or None)
+        form = AccountRegister(request.POST or None)
+        print('s')
         if form.is_valid():
-            accountHolder = form.save(commit=False)
-            accountHolder.user = request.user
-            accountHolder.accountNumber = form.cleaned_data['accountNumber']
-            accountHolder.full_name = form.cleaned_data['full_name']
-            accountHolder.gender = form.cleaned_data['gender']
-            accountHolder.fatherName = form.cleaned_data['fatherName']
-            accountHolder.motherName = form.cleaned_data['motherName']
-            accountHolder.ifsc = form.cleaned_data['ifsc']
-            accountHolder.pan = form.cleaned_data['pan']
-            accountHolder.contactNumber = form.cleaned_data['contactNumber']
-            accountHolder.email = form.cleaned_data['email']
-            accountHolder.dateOfBirth = form.cleaned_data['dateOfBirth']
-            accountHolder.profilePicture = request.FILES['profilePicture']
-            accountHolder.signature = request.FILES['signature']
-            file_type = accountHolder.profilePicture.url.split('.')[-1]
-            file_type = file_type.lower()
-            file_type_sign = accountHolder.signature.url.split('.')[-1]
-            file_type_sign = file_type_sign.lower()
-            if file_type not in IMAGE_FILE_TYPES or file_type_sign not in IMAGE_FILE_TYPES:
-                context = {
-                    'accountHolder': accountHolder,
-                    'form': form,
-                    'error_message': 'Image file must be PNG, JPG, or JPEG',
-                }
-                return render(request, 'ChequeClearingSystem/new_account.html', context)
-            accountHolder.save()
-            return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload})
-        context = {
-            "form": form,
-        }
-        return render(request, 'ChequeClearingSystem/new_account.html', context)
+            print('d')
+            # accountHolder = form.save(commit=False)
+            accountNumber = form.cleaned_data['accountNumber']
+            name = form.cleaned_data['name']
+            fatherName = form.cleaned_data['fatherName']
+            contactNumber = form.cleaned_data['contactNumber']
+            email = form.cleaned_data['email']
+            if (bearerBank.objects is None):
+                print('None', accountNumber, name)
+            print('YEs')
+            bankAccount = bearerBank.objects.filter(accountNumber=accountNumber)
+            print("Yesssssssssssssss")
+            accountOfUser = list()
+            for accounts in bankAccount:
+                accountOfUser.append((accounts.accountNumber, accounts.full_name, accounts.fatherName,
+                                      accounts.contactNumber, accounts.email))
+            enteredData = (accountNumber, name, fatherName, contactNumber, email)
+            print(enteredData)
+            print(accountOfUser)
+            print(bankAccount)
+            bankAccount = bankAccount.values()
+            bankAccount = list(bankAccount)
+            bankAccount = bankAccount[0]
+            temp = bankAccount
+            bankAccount = list()
+            for x in temp:
+                bankAccount.append(temp[x])
 
+            bankAccount = bearerBank(*bankAccount)
+            print(bankAccount)
+            if (enteredData == accountOfUser[0] and bankAccount.registered is False):
+                print('a')
+                bankAccount.registered = True
+                print('matched')
+                bankAccount.user = request.user
+                bankAccount.save(update_fields=['registered', 'user'])
+                messages.info(request, 'Your account has been added successfully!')
+                return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload})
+            else:
+                messages.info(request, 'Data Not Matched!/Account Exists Already')
+
+        context = {
+            "form": AccountRegister(),
+        }
+        messages.info(request, 'Data Entered is Invalid')
+        print('F', form.errors)
+        return render(request, 'ChequeClearingSystem/new_account.html', context)
 
 @login_required(login_url='/main')
 def details(request):

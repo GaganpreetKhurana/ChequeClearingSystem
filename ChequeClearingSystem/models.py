@@ -8,7 +8,7 @@ d = datetime.date(1970, 1, 1)
 
 
 class AccountHolder(models.Model):
-    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, default=None, on_delete=models.SET_NULL, null=True, blank=True)
     accountNumber = models.IntegerField(unique=True, default=1000000)
     full_name = models.CharField(max_length=100)
     gender = models.CharField(max_length=1, choices={('M', 'Male'), ('F', 'Female')})
@@ -22,7 +22,7 @@ class AccountHolder(models.Model):
     signature = models.FileField(default='images/female.jpg')
     dateOfBirth = models.DateField(default=d)
     balance = models.IntegerField(default=10000)
-
+    registered = models.BooleanField(default=False)
     class Meta:
         abstract = True
 
