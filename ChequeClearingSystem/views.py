@@ -13,6 +13,7 @@ class UserFormView(View):
     template_name = 'ChequeClearingSystem/registration_form.html'
 
     def get(self, request):
+        logout(request)
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
@@ -42,6 +43,7 @@ class LoginFormView(View):
     template_name = 'ChequeClearingSystem/login.html'
 
     def get(self, request):
+        logout(request)
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
@@ -55,7 +57,23 @@ class LoginFormView(View):
                 if user.is_active:
                     login(request, user)
                     print("Login")
-                    return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
+                    profile = bearerBank.objects.filter(user=request.user, registered=True)
+                    details = None
+                    print(profile)
+                    print(profile[0])
+                    if profile is not None:
+                        details = dict()
+                        profile = profile[0]
+                        details['accountNumber'] = profile.accountNumber
+                        details['name'] = profile.full_name
+                        details['fatherName'] = profile.fatherName
+                        details['balance'] = profile.balance
+                        details['profilePicture'] = profile.profilePicture.url
+                        details['dateOfBirth'] = profile.dateOfBirth
+                        details['pan'] = profile.pan
+                    print(details)
+                    return render(request, 'ChequeClearingSystem/details.html',
+                                  {'form': chequeUpload(), 'details': details})
 
         return render(request, 'ChequeClearingSystem/login.html', {'form': form})
 
@@ -74,14 +92,10 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 def createAccountHolder(request):
     print('c')
     if not request.user.is_authenticated:
-        print('a')
         return render(request, 'ChequeClearingSystem/login.html')
     else:
         form = AccountRegister(request.POST or None)
-        print('s')
         if form.is_valid():
-            print('d')
-            # accountHolder = form.save(commit=False)
             accountNumber = form.cleaned_data['accountNumber']
             name = form.cleaned_data['name']
             fatherName = form.cleaned_data['fatherName']
@@ -89,9 +103,7 @@ def createAccountHolder(request):
             email = form.cleaned_data['email']
             if (bearerBank.objects is None):
                 print('None', accountNumber, name)
-            print('YEs')
             bankAccount = bearerBank.objects.filter(accountNumber=accountNumber)
-            print("Yesssssssssssssss")
             accountOfUser = list()
             for accounts in bankAccount:
                 accountOfUser.append((accounts.accountNumber, accounts.full_name, accounts.fatherName,
@@ -111,9 +123,7 @@ def createAccountHolder(request):
             bankAccount = bearerBank(*bankAccount)
             print(bankAccount)
             if (enteredData == accountOfUser[0] and bankAccount.registered is False):
-                print('a')
                 bankAccount.registered = True
-                print('matched')
                 bankAccount.user = request.user
                 bankAccount.save(update_fields=['registered', 'user'])
                 messages.info(request, 'Your account has been added successfully!')
@@ -127,6 +137,7 @@ def createAccountHolder(request):
         messages.info(request, 'Data Entered is Invalid')
         print('F', form.errors)
         return render(request, 'ChequeClearingSystem/new_account.html', context)
+
 
 @login_required(login_url='/main')
 def details(request):

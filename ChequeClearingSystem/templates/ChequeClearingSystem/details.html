@@ -1,10 +1,25 @@
 {% extends 'ChequeClearingSystem/base.html' %}
 {% block title %}Details{% endblock %}
-
+{% load static %}
 {% block body %}
     {#    {% if error_message %}#}
     {#        <p><strong>{{ error_message }}</strong></p>#}
     {#    {% endif %}#}
+    <div class="profile">
+        {% for key,value in details.items %}
+            {% if key != 'profilePicture' %}
+                {{ key }}----------{{ value }}
+            {% endif %}<br><br>
+            {#            {% if key == 'profilePicture' %}#}
+            {#                {{ key }}@@@@@@@@#}
+            {#                <img src="../../static/images/{{ details.profilePicture }}" alt="Profile Picture">#}
+            {#                <img src="images/{{ value }}" alt="Profile Picture">#}
+            {#                <div>{{ static }}images/{{ value }}</div>#}
+            {#            {% endif %}<br><br>#}
+
+
+        {% endfor %}
+    </div>
     <div class="menu">
         <form method="POST">
             {% csrf_token %}
