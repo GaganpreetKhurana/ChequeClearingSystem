@@ -6,6 +6,7 @@ from django.views.generic import View
 
 from .forms import UserForm, LoginForm, AccountRegister, chequeUpload
 from .models import bearerBank
+from .static.processing import extractDetails
 
 
 class UserFormView(View):
@@ -33,7 +34,7 @@ class UserFormView(View):
                 if user.is_active:
                     login(request, user)
                     print("login")
-                    return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
+                    return redirect('ChequeClearingSystem:profile')
 
             return render(request, self.template_name, {'form': form})
 
@@ -57,25 +58,8 @@ class LoginFormView(View):
                 if user.is_active:
                     login(request, user)
                     print("Login")
-                    profile = bearerBank.objects.filter(user=request.user, registered=True)
-                    details = None
-                    print(profile)
-                    print(profile[0])
-                    if profile is not None:
-                        details = dict()
-                        profile = profile[0]
-                        details['accountNumber'] = profile.accountNumber
-                        details['name'] = profile.full_name
-                        details['fatherName'] = profile.fatherName
-                        details['balance'] = profile.balance
-                        details['profilePicture'] = profile.profilePicture.url
-                        details['dateOfBirth'] = profile.dateOfBirth
-                        details['pan'] = profile.pan
-                    print(details)
-                    return render(request, 'ChequeClearingSystem/details.html',
-                                  {'form': chequeUpload(), 'details': details})
-
-        return render(request, 'ChequeClearingSystem/login.html', {'form': form})
+                    return redirect('ChequeClearingSystem:profile')
+        return redirect('ChequeClearingSystem:main')
 
 
 @login_required(login_url='/main')
@@ -109,9 +93,6 @@ def createAccountHolder(request):
                 accountOfUser.append((accounts.accountNumber, accounts.full_name, accounts.fatherName,
                                       accounts.contactNumber, accounts.email))
             enteredData = (accountNumber, name, fatherName, contactNumber, email)
-            print(enteredData)
-            print(accountOfUser)
-            print(bankAccount)
             bankAccount = bankAccount.values()
             bankAccount = list(bankAccount)
             bankAccount = bankAccount[0]
@@ -121,13 +102,12 @@ def createAccountHolder(request):
                 bankAccount.append(temp[x])
 
             bankAccount = bearerBank(*bankAccount)
-            print(bankAccount)
             if (enteredData == accountOfUser[0] and bankAccount.registered is False):
                 bankAccount.registered = True
                 bankAccount.user = request.user
                 bankAccount.save(update_fields=['registered', 'user'])
                 messages.info(request, 'Your account has been added successfully!')
-                return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload})
+                return redirect('ChequeClearingSystem:profile')
             else:
                 messages.info(request, 'Data Not Matched!/Account Exists Already')
 
@@ -141,14 +121,31 @@ def createAccountHolder(request):
 
 @login_required(login_url='/main')
 def details(request):
-    if not request.user.is_authenticated:
-        return render(request, 'ChequeClearingSystem/login.html')
-    elif request.GET == True:
-        return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload()})
+    # get user acccount details from database
+    print("YYYYYYYYY")
+    profile = bearerBank.objects.filter(user=request.user, registered=True)
+    details = None
+    if profile:
+        details = dict()
+        profile = profile[0]
+        details['accountNumber'] = profile.accountNumber
+        details['name'] = profile.full_name
+        details['fatherName'] = profile.fatherName
+        details['balance'] = profile.balance
+        details['profilePicture'] = profile.profilePicture.url
+        details['dateOfBirth'] = profile.dateOfBirth
+        details['pan'] = profile.pan
 
-    else:
+    print(request.user)
+    print(details)
+    if not request.user.is_authenticated:
+        print('No')
+        return redirect('ChequeClearingSystem:main')
+    elif request.POST:
+        print("X")
         form = chequeUpload(request.POST or None, request.FILES or None)
         if form.is_valid():
+            print("XX")
             chequeDetails = form.save(commit=False)
             chequeDetails.accountNumber = form.cleaned_data['accountNumber']
             chequeDetails.amount = form.cleaned_data['amount']
@@ -157,13 +154,16 @@ def details(request):
             file_type_sign = file_type_sign.lower()
             accountHolder = bearerBank.objects.filter(user=request.user)
             accountNumberUser = list()
+
             for accounts in accountHolder:
                 accountNumberUser.append(accounts.accountNumber)
+
             if chequeDetails.accountNumber not in accountNumberUser:
                 context = {
                     'chequeDetails': chequeDetails,
-                    'form': form,
+                    'form': chequeUpload(),
                     'error_message': 'No account',
+                    'details': details
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
             accountHolder = bearerBank.objects.filter(accountNumber=chequeDetails.accountNumber)
@@ -172,11 +172,13 @@ def details(request):
             accountHolder = accountHolder[0]
             temp = accountHolder
             accountHolder = list()
+
             for x in temp:
                 accountHolder.append(temp[x])
 
             accountHolder = bearerBank(*accountHolder)
             chequeDetails.client = accountHolder
+
             if file_type_sign not in IMAGE_FILE_TYPES:
                 context = {
                     'chequeDetails': chequeDetails,
@@ -185,9 +187,14 @@ def details(request):
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
             chequeDetails.save()
+            detailsFromCheque = extractDetails.extractDetailsFromCheque(
+                './static/processing/cheque.png')  # chequeDetails.cheque)
+            print(detailsFromCheque)
+
             return render(request, 'ChequeClearingSystem/details.html',
-                          {'chequeDetails': chequeDetails, 'form': chequeUpload()})
-        context = {
-            "form": form
-        }
-        return render(request, 'ChequeClearingSystem/details.html', context)
+                          {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details})
+
+        return redirect('ChequeClearingSystem:profile')
+    else:
+        print("yes")
+        return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload(), 'details': details})

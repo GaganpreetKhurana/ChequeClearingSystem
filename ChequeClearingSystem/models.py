@@ -38,7 +38,7 @@ class cheque(models.Model):
 class payeeBank(AccountHolder):
 
     def __str__(self):
-        return self.full_name + '--' + str(self.accountNumber)
+        return self.full_name + '--' + str(self.accountNumber) + '--' + str(self.contactNumber)
 
 
 class bearerBank(AccountHolder):
@@ -46,7 +46,7 @@ class bearerBank(AccountHolder):
     registered = models.BooleanField(default=False, verbose_name='Account Registered')
 
     def __str__(self):
-        return self.full_name + '--' + str(self.accountNumber)
+        return self.full_name + '--' + str(self.accountNumber) + '--' + str(self.contactNumber)
 
 
 class payeeBankCheque(cheque):
