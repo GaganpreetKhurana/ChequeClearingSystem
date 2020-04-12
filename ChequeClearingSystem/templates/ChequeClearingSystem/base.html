@@ -1,13 +1,20 @@
 <!DOCTYPE html>
+<script>
+    var alertMEssage ={{ msg }};
+    if (alertMEssage) {
+        alert('{{ msg }}')
+    }
+
+</script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     {% load static %}
-         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'stylesheet/styles.css' %}" type="text/css">
-       <link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet" type="text/css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
             $(".menu ul li a").click(function () {
@@ -29,20 +36,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" ><p align="center">PEB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="navbar-brand"><p align="center">PEB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;Cheque  Clearing  System</p></a>
+                &nbsp;&nbsp;&nbsp;&nbsp;Cheque Clearing System</p></a>
         </div>
     </div>
 </nav>
 
 <div class="container">
-    <div >
-        <p ><span style="font-size:50px;color: white; "><b>PEB</b></span></p>
+    <div>
+        <p><span style="font-size:50px;color: white; "><b>PEB</b></span></p>
         <p><span style="font-size:30px;color: white; "><b>PEC &nbsp;ENGINEERING &nbsp;BANK</b></span></p>
 
     </div>
@@ -64,15 +71,15 @@
 <br>
 
 <footer>
-<div class= "navbar navbar-inverse navbar-static-bottom" role="navigation">
-    <div class="navbar-text pull-left">
+    <div class="navbar navbar-inverse navbar-static-bottom" role="navigation">
+        <div class="navbar-text pull-left">
+        </div>
+        <div class="navbar-text pull-right">
+        </div>
+        <div class="navbar-text pull-left">
+            &copy; Copyright &nbsp;&nbsp; Akshit Garg &nbsp; and &nbsp; Gaganpreet Singh Khurana
+        </div>
     </div>
-    <div class= "navbar-text pull-right">
-    </div>
-    <div class="navbar-text pull-left">
-    &copy; Copyright  &nbsp;&nbsp;  Akshit Garg &nbsp; and &nbsp; Gaganpreet Singh Khurana
-    </div>
-</div>
 </footer>
 </body>
 </html>

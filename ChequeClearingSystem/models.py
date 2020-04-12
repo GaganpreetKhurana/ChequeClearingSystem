@@ -55,7 +55,7 @@ class payeeBankCheque(cheque):
     bearer = models.ForeignKey(bearerBank, default=1, on_delete=models.DO_NOTHING, verbose_name='Bearer')
 
     def __str__(self):
-        return str(self.accountNumber) + str(self.amount) + str(self.timeDeposited)
+        return str(self.accountNumber) + ' ' + str(self.amount) + " " + str(self.timeDeposited)
 
 
 class bearerBankCheque(cheque):
@@ -64,4 +64,4 @@ class bearerBankCheque(cheque):
     bearer = models.ForeignKey(bearerBank, default=1, on_delete=models.DO_NOTHING, verbose_name='Bearer')
 
     def __str__(self):
-        return str(self.accountNumber) + str(self.amount) + str(self.timeDeposited)
+        return str(self.accountNumber) + ' ' + str(self.amount) + ' ' + str(self.timeDeposited)
