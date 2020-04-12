@@ -10,12 +10,6 @@
             {% if key != 'profilePicture' %}
                 {{ key }}----------{{ value }}
             {% endif %}<br><br>
-            {#            {% if key == 'profilePicture' %}#}
-            {#                {{ key }}@@@@@@@@#}
-            {#                <img src="../../static/images/{{ details.profilePicture }}" alt="Profile Picture">#}
-            {#                <img src="images/{{ value }}" alt="Profile Picture">#}
-            {#                <div>{{ static }}images/{{ value }}</div>#}
-            {#            {% endif %}<br><br>#}
 
 
         {% endfor %}
@@ -42,4 +36,5 @@
         </form>
         <br>
     </div>
+
 {% endblock %}
