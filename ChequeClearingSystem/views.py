@@ -118,7 +118,7 @@ def createAccountHolder(request):
 
 @login_required(login_url='/main')
 def details(request):
-    # get user acccount details from database
+    # get user account details from database
     profile = bearerBank.objects.filter(user=request.user, registered=True)
     details = None
     if profile:
@@ -153,7 +153,7 @@ def details(request):
                 context = {
                     'chequeDetails': chequeDetails,
                     'form': chequeUpload(),
-                    'error_message': 'No account',
+                    'msg': 'No account',
                     'details': details
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
@@ -174,18 +174,19 @@ def details(request):
                 context = {
                     'chequeDetails': chequeDetails,
                     'form': form,
-                    'error_message': 'Image file must be PNG, JPG, or JPEG',
+                    'msg': 'Image file must be PNG, JPG, or JPEG',
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
-            print(chequeDetails.cheque)
+            chequeDetails.save()
             acknowledgement = processing(chequeDetails.amount,
-                                         BASE_DIR + '/Original cheques/' + str(chequeDetails.cheque),
+                                         BASE_DIR + '/ChequeClearingSystem/files/' + str(chequeDetails.cheque),
                                          accountHolder.full_name)
             if acknowledgement == 'NAK':
-                print("FAILED")
+                message = 'Transaction Failed'
+                return render(request, 'ChequeClearingSystem/details.html',
+                              {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details,
+                               'msg': message})
             else:
-                print("SUCCESS")
-                print(acknowledgement)
                 # payeeBank object
                 payee = payeeBank.objects.filter(accountNumber=acknowledgement[1])
                 payee = payee.values()
@@ -198,6 +199,7 @@ def details(request):
 
                 payee = payeeBank(*payee)
                 chequeDetails.payee = payee
+                chequeDetails.accountNumber = acknowledgement[3]
 
                 timeNow = datetime.now()
                 accountHolder.lastTransaction = timeNow
@@ -205,12 +207,12 @@ def details(request):
                 accountHolder.balance += acknowledgement[2]
                 payee.balance -= acknowledgement[2]
 
-                # payeeBankChequ
+                # payeeBankCheque
                 payeeCheque = payeeBankCheque()
                 payeeCheque.payee = payee
                 payeeCheque.bearer = accountHolder
                 payeeCheque.cheque = chequeDetails.cheque
-                payeeCheque.accountNumber = acknowledgement[1]
+                payeeCheque.accountNumber = acknowledgement[3]
                 payeeCheque.timeDeposited = timeNow
                 payeeCheque.amount = chequeDetails.amount
 
@@ -228,4 +230,6 @@ def details(request):
 
         return redirect('ChequeClearingSystem:profile')
     else:
-        return render(request, 'ChequeClearingSystem/details.html', {'form': chequeUpload(), 'details': details})
+        message = "WELCOME " + details['name']
+        return render(request, 'ChequeClearingSystem/details.html',
+                      {'form': chequeUpload(), 'details': details, 'msg': message})

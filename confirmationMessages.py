@@ -11,8 +11,6 @@ def sendMessage(amount, updatedBalance, contactNumber, accountNumber):
         transaction = ' debit '
     msg = 'Last Transaction in A/C ' + str(accountNumber) + ' at ' + str(datetime.now()) + transaction + str(
         abs(amount)) + ' Balance ' + str(updatedBalance)
-    print(msg)
-    msg = 'test2'
     querystring = {"authorization": "5opOL4g8RtrVU6lHMS0nWqdQfBa7jhbAJKNCZ31czFewPXvTyxHDBQVsmeRYSlT4wW8Ov9br3UpCkgIN"
         , "sender_id": "FSTSMS", "message": msg, "language": "english",
                    "route": "p", "numbers": str(contactNumber)}
@@ -23,6 +21,4 @@ def sendMessage(amount, updatedBalance, contactNumber, accountNumber):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    print(response.text)
-
-# sendMessage(-500,4300,9815878235,123456)
+    # print(response.text)

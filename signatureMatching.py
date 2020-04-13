@@ -11,5 +11,3 @@ def matchSign(fromDB, fromCheque='gray_img.png'):
     else:
         return False
 
-# a = matchSign('Original signatures/SIGN-O.png', 'gray_img.png')
-# print(a)
