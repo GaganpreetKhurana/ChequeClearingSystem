@@ -177,10 +177,15 @@ def details(request):
                     'msg': 'Image file must be PNG, JPG, or JPEG',
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
-            chequeDetails.save()
-            acknowledgement = processing(chequeDetails.amount,
-                                         BASE_DIR + '/ChequeClearingSystem/files/' + str(chequeDetails.cheque),
-                                         accountHolder.full_name)
+            chequeDetails.accountNumber = -1
+            try:
+                chequeDetails.save()
+
+                acknowledgement = processing(chequeDetails.amount,
+                                             BASE_DIR + '/ChequeClearingSystem/files/' + str(chequeDetails.cheque),
+                                             accountHolder.full_name)
+            except:
+                acknowledgement = 'NAK'
             if acknowledgement == 'NAK':
                 message = 'Transaction Failed'
                 return render(request, 'ChequeClearingSystem/details.html',

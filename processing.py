@@ -5,6 +5,7 @@ import extractDetails
 from ChequeClearingSystemProject.settings import BASE_DIR
 from Extracting_signatures import extractSignature
 from signatureMatching import matchSign
+from wordToNumber import wordToNumber
 
 
 def diff_month(d1, d2):
@@ -47,7 +48,10 @@ def processing(amountFromForm, cheque, bearerName):
         detailsFromDB = i
     if detailsFromDB is None:
         return ('NAK')
-    if bearerName != detailsFromCheque['name']:
+    if bearerName.lower() != detailsFromCheque['name'].lower():
+        return ('NAK')
+    numberFromWord = wordToNumber(detailsFromCheque['amountInWords'])
+    if numberFromWord != amountFromCheque:
         return ('NAK')
 
     if detailsFromDB[11] < amountFromCheque:

@@ -9,6 +9,12 @@ def extractDetailsFromCheque(filePath):
     text = pt.image_to_string(im)
     data = text.splitlines()
     details = dict()
+    temp = data[8].split()[1:]
+    details['amountInWords'] = ''
+    for i in temp:
+        details['amountInWords'] += i + ' '
+    details['amountInWords'] = details['amountInWords'][:-1]
+
     details['bankName'] = data[0]
     details['chequeNumber'] = data[-1]
     for x in data:

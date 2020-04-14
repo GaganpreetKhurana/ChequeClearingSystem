@@ -1,51 +1,54 @@
-d = {'zero':0,'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
-'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'sixteen': 16,
-'seventeen':17,'eighteen':18,'nineteen':19,'twenty':20,'thirty':30,'forty':40,'fifty':50}
+d = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+     'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'sixteen': 16,
+     'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50}
+
+
 def wordToNumber(wordNumberString):
-    wordNumberString=wordNumberString.lower()
+    wordNumberString = wordNumberString.lower()
     wordNumberString = wordNumberString.split()
     if wordNumberString[-1] == 'only':
         wordNumberString.pop(-1)
     length = len(wordNumberString)
-    ans=0
+    ans = 0
     i = 0
     if ('crore' in wordNumberString):
         temp = []
         while (i < length and wordNumberString[i] != r'crore'):
             temp.append(wordNumberString[i])
             i += 1
-        i+=1
-        ans += convert(temp,10000000)
+        i += 1
+        ans += convert(temp, 10000000)
     if ('lakh' in wordNumberString):
         temp = []
         while (i < length and wordNumberString[i] != r'lakh'):
             temp.append(wordNumberString[i])
             i += 1
-        i+=1
-        ans += convert(temp,100000)
+        i += 1
+        ans += convert(temp, 100000)
     if ('thousand' in wordNumberString):
         temp = []
         while (i < length and wordNumberString[i] != r'thousand'):
             temp.append(wordNumberString[i])
             i += 1
-        i+=1
+        i += 1
         ans += convert(temp, 1000)
     if ('hundred' in wordNumberString):
         temp = []
         while (i < length and wordNumberString[i] != r'hundred'):
-            if (wordNumberString[i]!='and'):
+            if (wordNumberString[i] != 'and'):
                 temp.append(wordNumberString[i])
             i += 1
-        i+=1
+        i += 1
         ans += convert(temp, 100)
-    temp=[]
+    temp = []
     while (i < length):
-        if (wordNumberString[i]!='and'):
+        if (wordNumberString[i] != 'and'):
             temp.append(wordNumberString[i])
         i += 1
-    if len(temp)!=0:
+    if len(temp) != 0:
         ans += convert(temp, 1)
     return ans
+
 
 def convert(listString, num):
     if len(listString) == 1:
@@ -54,28 +57,20 @@ def convert(listString, num):
         else:
             temp = listString[0][:-2]
             if temp in d:
-                if d[temp]<10:
+                if d[temp] < 10:
                     return d[temp] * 10 * num
                 else:
-                    return d[temp]*num
+                    return d[temp] * num
     else:
-        temp=0
+        temp = 0
         if listString[0] in d:
-            temp+= d[listString[0]]
+            temp += d[listString[0]]
         else:
             temp2 = listString[0][:-2]
             if temp2 in d:
-                if d[temp2]<10:
+                if d[temp2] < 10:
                     temp += d[temp2] * 10
                 else:
-                    temp+=d[temp2]
+                    temp += d[temp2]
         temp += d[listString[1]]
         return temp * num
-        
-# s = "crore One Lakh Ninety nine Thousand Five hundred and six only"
-# result = 0
-# try:
-#     result = wordToNumber(s)
-# except:
-#     result = -1
-# print(result)
