@@ -10,15 +10,15 @@ body {
 }
 
 .navbar{
-    border-radius: 120%;
+    border-radius: 1%;
     height: 10%;
 }
 .navbar-brand
 * {
     height: 10%;
-    margin: 10;
+    margin: 10%;
     padding: 0;
-    font-family: 'Arial Black' , cursive;
+    font-family: 'Arial Black', cursive;
 }
 .topleft {
   position: absolute;
