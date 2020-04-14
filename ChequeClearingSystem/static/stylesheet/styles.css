@@ -9,23 +9,25 @@ body {
     background-size: cover;
 }
 
-.navbar{
-    border-radius: 1%;
+.navbar {
+    border-radius: 0%;
     height: 10%;
 }
-.navbar-brand
-* {
+
+.navbar-brand * {
     height: 10%;
-    margin: 10%;
+    margin: 10px;
     padding: 0;
     font-family: 'Arial Black', cursive;
 }
+
 .topleft {
-  position: absolute;
-  top: 8px;
-  left: 16px;
-  font-size: 18px;
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    font-size: 18px;
 }
+
 .tagline {
     float: left;
     margin: 10px;
@@ -43,7 +45,7 @@ body {
 .menu li {
     float: left;
     width: 120px;
-    height: 65px;
+    height: 5%;
     line-height: 70px;
     text-align: center;
     list-style: none;
@@ -72,7 +74,7 @@ body {
 
 .box {
     position: absolute;
-    top: 120%;
+    top: 50%;
     Left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
@@ -170,6 +172,3 @@ body {
 .profile {
     color: white;
 }
-
-
-

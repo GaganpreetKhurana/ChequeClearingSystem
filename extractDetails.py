@@ -3,7 +3,6 @@ from PIL import Image
 
 
 # pt.pytesseract.tesseract_cmd=r'C:\Users\AKSHIT\AppData\Local\Programs\Python\Python37-32\Scripts\Tesseract.exe'
-# filepath='cheque.png'
 def extractDetailsFromCheque(filePath):
     im = Image.open(filePath)
     text = pt.image_to_string(im)
@@ -31,4 +30,3 @@ def extractDetailsFromCheque(filePath):
             if z == 'No.':
                 details['accountNumber'] = y[index + 1]
     return details
-# extractDetailsFromCheque(filepath)
