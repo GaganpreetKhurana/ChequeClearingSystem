@@ -20,7 +20,7 @@ class AccountHolder(models.Model):
     signature = models.FileField(default='images/female.jpg', verbose_name='Signature')
     dateOfBirth = models.DateField(default=d, verbose_name='Date of Birth')
     balance = models.IntegerField(default=10000, verbose_name='Balance')
-    lastTransaction = models.DateField(verbose_name='Last Transaction', null=True, blank=True, default=None)
+    lastTransaction = models.DateTimeField(verbose_name='Last Transaction', null=True, blank=True, default=None)
 
     class Meta:
         abstract = True
@@ -29,7 +29,7 @@ class AccountHolder(models.Model):
 class cheque(models.Model):
     cheque = models.FileField(verbose_name='Cheque Image')
     amount = models.IntegerField(verbose_name='Amount')
-    accountNumber = models.IntegerField(verbose_name='Account Number')
+    chequeNumber = models.IntegerField(verbose_name='Account Number')
 
     class Meta:
         abstract = True
@@ -55,7 +55,7 @@ class payeeBankCheque(cheque):
     bearer = models.ForeignKey(bearerBank, default=1, on_delete=models.DO_NOTHING, verbose_name='Bearer')
 
     def __str__(self):
-        return str(self.accountNumber) + ' ' + str(self.amount) + " " + str(self.timeDeposited)
+        return str(self.chequeNumber) + ' ' + str(self.amount) + " " + str(self.timeDeposited)
 
 
 class bearerBankCheque(cheque):
@@ -64,4 +64,4 @@ class bearerBankCheque(cheque):
     bearer = models.ForeignKey(bearerBank, default=1, on_delete=models.DO_NOTHING, verbose_name='Bearer')
 
     def __str__(self):
-        return str(self.accountNumber) + ' ' + str(self.amount) + ' ' + str(self.timeDeposited)
+        return str(self.chequeNumber) + ' ' + str(self.amount) + ' ' + str(self.timeDeposited)

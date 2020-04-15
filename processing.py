@@ -19,7 +19,6 @@ def processing(amountFromForm, cheque, bearerName):
         return ('NAK')
     detailsFromCheque = extractDetails.extractDetailsFromCheque(cheque)
     date = datetime.strptime(detailsFromCheque['date'], '%d/%m/%Y')
-
     date = date.date()
     present = datetime.now()
     present = present.date()
@@ -28,19 +27,17 @@ def processing(amountFromForm, cheque, bearerName):
     amountFromCheque = float(detailsFromCheque['amount'])
     if amountFromCheque != float(amountFromForm):
         return ('NAK')
-
     conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
     chequeNumber = detailsFromCheque['chequeNumber']
     chequeNumber = chequeNumber.split('-')
     chequeNumber = ''.join(chequeNumber)
-    c.execute("SELECT * from ChequeClearingSystem_bearerBankCheque where accountNumber=?", (int(chequeNumber),))
+    c.execute("SELECT * from ChequeClearingSystem_bearerBankCheque where chequeNumber=?", (int(chequeNumber),))
     chequeNumberCheck = None
     for i in c:
         chequeNumberCheck = i
     if chequeNumberCheck is not None:
         return ("NAK")
-
     temp = detailsFromCheque['accountNumber']
     detailsFromDB = None
     c.execute("SELECT * from ChequeClearingSystem_payeeBank where accountNumber=?", (int(temp),))
@@ -53,11 +50,11 @@ def processing(amountFromForm, cheque, bearerName):
     numberFromWord = wordToNumber(detailsFromCheque['amountInWords'])
     if numberFromWord != amountFromCheque:
         return ('NAK')
-
-    if detailsFromDB[11] < amountFromCheque:
+    print(detailsFromDB, detailsFromDB[12])
+    if detailsFromDB[12] < amountFromCheque:
         return ('NAK')
     extractSignature(cheque)
-    signPath = BASE_DIR + '/ChequeClearingSystem/files/' + detailsFromDB[9]
+    signPath = BASE_DIR + '/ChequeClearingSystem/files/' + detailsFromDB[10]
     if not matchSign(signPath):
         return ('NAK')
     return ('ACK', temp, amountFromCheque, chequeNumber)

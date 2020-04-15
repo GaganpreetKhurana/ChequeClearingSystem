@@ -177,7 +177,7 @@ def details(request):
                     'msg': 'Image file must be PNG, JPG, or JPEG',
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
-            chequeDetails.accountNumber = -1
+            chequeDetails.chequeNumber = -1
             try:
                 chequeDetails.save()
 
@@ -196,6 +196,7 @@ def details(request):
                 payee = payeeBank.objects.filter(accountNumber=acknowledgement[1])
                 payee = payee.values()
                 payee = list(payee)
+                print(payee)
                 payee = payee[0]
                 temp = payee
                 payee = list()
@@ -204,7 +205,7 @@ def details(request):
 
                 payee = payeeBank(*payee)
                 chequeDetails.payee = payee
-                chequeDetails.accountNumber = acknowledgement[3]
+                chequeDetails.chequeNumber = acknowledgement[3]
 
                 timeNow = datetime.now()
                 accountHolder.lastTransaction = timeNow
@@ -217,7 +218,7 @@ def details(request):
                 payeeCheque.payee = payee
                 payeeCheque.bearer = accountHolder
                 payeeCheque.cheque = chequeDetails.cheque
-                payeeCheque.accountNumber = acknowledgement[3]
+                payeeCheque.chequeNumber = acknowledgement[3]
                 payeeCheque.timeDeposited = timeNow
                 payeeCheque.amount = chequeDetails.amount
 

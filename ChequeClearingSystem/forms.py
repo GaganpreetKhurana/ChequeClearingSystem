@@ -40,6 +40,7 @@ class AccountRegister(forms.Form):
 
 class chequeUpload(forms.ModelForm):
     cheque = forms.FileField(widget=forms.FileInput())
+    accountNumber = forms.IntegerField()
 
     class Meta:
         model = bearerBankCheque
