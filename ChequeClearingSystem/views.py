@@ -236,6 +236,9 @@ def details(request):
 
         return redirect('ChequeClearingSystem:profile')
     else:
-        message = "WELCOME " + details['name']
+        if details is not None:
+            message = "WELCOME " + details['name']
+        else:
+            message = "WELCOME"
         return render(request, 'ChequeClearingSystem/details.html',
                       {'form': chequeUpload(), 'details': details, 'msg': message})
