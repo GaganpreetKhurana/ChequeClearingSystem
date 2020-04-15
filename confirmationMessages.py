@@ -3,7 +3,9 @@ from datetime import datetime
 import requests
 
 
-def sendMessage(amount, updatedBalance, contactNumber, accountNumber, msg=None):
+def sendMessage(amount=None, updatedBalance=None, contactNumber=None, accountNumber=None, msg=None):
+    if contactNumber is None:
+        return
     url = "https://www.fast2sms.com/dev/bulk"
     a = "6284090494"
     if msg is None:

@@ -191,45 +191,62 @@ def details(request):
                 return render(request, 'ChequeClearingSystem/details.html',
                               {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details,
                                'msg': message})
+            elif acknowledgement[0] == 'NAK':
+                try:
+                    message = 'Transaction Failed. Balance in A/C ' + str(acknowledgement[3]) + ": " + str(
+                        acknowledgement[2])
+                    sendMessage(contactNumber=acknowledgement[1], msg=message)
+                    message = 'Transaction Failed. Balance in A/C ' + str(accountHolder.accountNumber) + ": " + str(
+                        accountHolder.balance)
+
+                    sendMessage(contactNumber=accountHolder.contactNumber, msg=message)
+                except:
+                    message = "Transaction Failed"
+
+                return render(request, 'ChequeClearingSystem/details.html',
+                              {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details,
+                               'msg': message})
             else:
-                # payeeBank object
-                payee = payeeBank.objects.filter(accountNumber=acknowledgement[1])
-                payee = payee.values()
-                payee = list(payee)
-                print(payee)
-                payee = payee[0]
-                temp = payee
-                payee = list()
-                for x in temp:
-                    payee.append(temp[x])
+                try:
+                    # payeeBank object
+                    payee = payeeBank.objects.filter(accountNumber=acknowledgement[1])
+                    payee = payee.values()
+                    payee = list(payee)
+                    payee = payee[0]
+                    temp = payee
+                    payee = list()
+                    for x in temp:
+                        payee.append(temp[x])
 
-                payee = payeeBank(*payee)
-                chequeDetails.payee = payee
-                chequeDetails.chequeNumber = acknowledgement[3]
+                    payee = payeeBank(*payee)
+                    chequeDetails.payee = payee
+                    chequeDetails.chequeNumber = acknowledgement[3]
 
-                timeNow = datetime.now()
-                accountHolder.lastTransaction = timeNow
-                payee.lastTransaction = timeNow
-                accountHolder.balance += acknowledgement[2]
-                payee.balance -= acknowledgement[2]
+                    timeNow = datetime.now()
+                    accountHolder.lastTransaction = timeNow
+                    payee.lastTransaction = timeNow
+                    accountHolder.balance += acknowledgement[2]
+                    payee.balance -= acknowledgement[2]
 
-                # payeeBankCheque
-                payeeCheque = payeeBankCheque()
-                payeeCheque.payee = payee
-                payeeCheque.bearer = accountHolder
-                payeeCheque.cheque = chequeDetails.cheque
-                payeeCheque.chequeNumber = acknowledgement[3]
-                payeeCheque.timeDeposited = timeNow
-                payeeCheque.amount = chequeDetails.amount
+                    # payeeBankCheque
+                    payeeCheque = payeeBankCheque()
+                    payeeCheque.payee = payee
+                    payeeCheque.bearer = accountHolder
+                    payeeCheque.cheque = chequeDetails.cheque
+                    payeeCheque.chequeNumber = acknowledgement[3]
+                    payeeCheque.timeDeposited = timeNow
+                    payeeCheque.amount = chequeDetails.amount
 
-                chequeDetails.save()
-                accountHolder.save()
-                payee.save()
-                payeeCheque.save()
-                sendMessage(acknowledgement[2], accountHolder.balance, accountHolder.contactNumber,
-                            accountHolder.accountNumber)
-                sendMessage(-acknowledgement[2], payee.balance, payee.contactNumber, payee.accountNumber)
-                message = 'Transaction Successful'
+                    chequeDetails.save()
+                    accountHolder.save()
+                    payee.save()
+                    payeeCheque.save()
+                    sendMessage(acknowledgement[2], accountHolder.balance, accountHolder.contactNumber,
+                                accountHolder.accountNumber)
+                    sendMessage(-acknowledgement[2], payee.balance, payee.contactNumber, payee.accountNumber)
+                    message = 'Transaction Successful'
+                except:
+                    message = "Transaction Failed"
                 return render(request, 'ChequeClearingSystem/details.html',
                               {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details,
                                'msg': message})

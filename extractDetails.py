@@ -2,7 +2,7 @@ import pytesseract as pt
 from PIL import Image
 
 
-pt.pytesseract.tesseract_cmd=r'C:\Users\AKSHIT\AppData\Local\Programs\Python\Python37-32\Scripts\Tesseract.exe'
+# pt.pytesseract.tesseract_cmd=r'C:\Users\AKSHIT\AppData\Local\Programs\Python\Python37-32\Scripts\Tesseract.exe'
 def extractDetailsFromCheque(filePath):
     im = Image.open(filePath)
     text = pt.image_to_string(im)
