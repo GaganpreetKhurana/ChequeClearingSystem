@@ -2,6 +2,11 @@ import cv2
 
 
 def extractSignature(path):
+    '''
+    Extract Signature from the cheque
+    :param path: path of cheque
+    :return: None
+    '''
     img = cv2.imread(path)
     height, width = img.shape[0:2]
     rotationMatrix = cv2.getRotationMatrix2D((width / 2, height / 2), 90, .5)

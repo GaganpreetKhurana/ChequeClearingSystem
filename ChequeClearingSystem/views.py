@@ -13,6 +13,9 @@ from .models import bearerBank, payeeBank, payeeBankCheque
 
 
 class UserFormView(View):
+    '''
+    form view to registering new user
+    '''
     form_class = UserForm
     template_name = 'ChequeClearingSystem/registration_form.html'
 
@@ -43,6 +46,9 @@ class UserFormView(View):
 
 
 class LoginFormView(View):
+    '''
+    form view for Login
+    '''
     form_class = LoginForm
     template_name = 'ChequeClearingSystem/login.html'
 
@@ -67,6 +73,11 @@ class LoginFormView(View):
 
 @login_required(login_url='/main')
 def logout_view(request):
+    '''
+    logout view
+    :param request: request object
+    :return: redirects to login
+    '''
     logout(request)
     print("logout")
     return redirect('ChequeClearingSystem:main')
@@ -77,16 +88,24 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 @login_required(login_url='/main')
 def createAccountHolder(request):
-    if not request.user.is_authenticated:
+    '''
+    To register account with user
+    :param request: request object
+    :return: redirects to login page ,details page,register account page
+    '''
+    if not request.user.is_authenticated:  # unauthenticated user
         return render(request, 'ChequeClearingSystem/login.html')
     else:
         form = AccountRegister(request.POST or None)
-        if form.is_valid():
+        if form.is_valid():  # check if form is valid
+            # extract detais
             accountNumber = form.cleaned_data['accountNumber']
             name = form.cleaned_data['name']
             fatherName = form.cleaned_data['fatherName']
             contactNumber = form.cleaned_data['contactNumber']
             email = form.cleaned_data['email']
+
+            # get details from bearerBank database and check if account exists
             bankAccount = bearerBank.objects.filter(accountNumber=accountNumber)
             accountOfUser = list()
             for accounts in bankAccount:
@@ -102,12 +121,15 @@ def createAccountHolder(request):
                 bankAccount.append(temp[x])
 
             bankAccount = bearerBank(*bankAccount)
+
+            # registers account
             if (enteredData == accountOfUser[0] and bankAccount.registered is False):
                 bankAccount.registered = True
                 bankAccount.user = request.user
                 bankAccount.save(update_fields=['registered', 'user'])
                 return redirect('ChequeClearingSystem:profile')
 
+        # for unregistered account
         context = {
             "form": AccountRegister(),
         }
@@ -118,6 +140,11 @@ def createAccountHolder(request):
 
 @login_required(login_url='/main')
 def details(request):
+    '''
+    to display user details and accept the cheque
+    :param request:
+    :return: redirects to appropriate page
+    '''
     # get user account details from database
     profile = bearerBank.objects.filter(user=request.user, registered=True)
     details = None
@@ -132,11 +159,12 @@ def details(request):
         details['dateOfBirth'] = profile.dateOfBirth
         details['pan'] = profile.pan
 
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated:  # unauthenticated user
         return redirect('ChequeClearingSystem:main')
-    elif request.POST:
+    elif request.POST:  # post request
         form = chequeUpload(request.POST or None, request.FILES or None)
         if form.is_valid():
+            # extract details and files from form
             chequeDetails = form.save(commit=False)
             chequeDetails.accountNumber = form.cleaned_data['accountNumber']
             chequeDetails.amount = form.cleaned_data['amount']
@@ -149,6 +177,7 @@ def details(request):
             for accounts in accountHolder:
                 accountNumberUser.append(accounts.accountNumber)
 
+            # cheque if account exists in database and user is registered with that account
             if chequeDetails.accountNumber not in accountNumberUser:
                 context = {
                     'chequeDetails': chequeDetails,
@@ -157,6 +186,8 @@ def details(request):
                     'details': details
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
+
+            # Create entry in bearer bank database
             accountHolder = bearerBank.objects.filter(accountNumber=chequeDetails.accountNumber)
             accountHolder = accountHolder.values()
             accountHolder = list(accountHolder)
@@ -170,6 +201,7 @@ def details(request):
             accountHolder = bearerBank(*accountHolder)
             chequeDetails.bearer = accountHolder
 
+            # check file type
             if file_type_sign not in IMAGE_FILE_TYPES:
                 context = {
                     'chequeDetails': chequeDetails,
@@ -178,6 +210,8 @@ def details(request):
                 }
                 return render(request, 'ChequeClearingSystem/details.html', context)
             chequeDetails.chequeNumber = -1
+
+            # extract details and match them with the database
             try:
                 chequeDetails.save()
 
@@ -186,20 +220,21 @@ def details(request):
                                              accountHolder.full_name)
             except:
                 acknowledgement = 'NAK'
-            if acknowledgement == 'NAK':
+
+            if acknowledgement == 'NAK':  # invalid Format
                 message = 'Transaction Failed'
                 return render(request, 'ChequeClearingSystem/details.html',
                               {'chequeDetails': chequeDetails, 'form': chequeUpload(), 'details': details,
                                'msg': message})
-            elif acknowledgement[0] == 'NAK':
+            elif acknowledgement[0] == 'NAK':  # Details verification failed
                 try:
                     message = 'Transaction Failed. Balance in A/C ' + str(acknowledgement[3]) + ": " + str(
                         acknowledgement[2])
-                    sendMessage(contactNumber=acknowledgement[1], msg=message)
+                    sendMessage(contactNumber=acknowledgement[1], msg=message)  # send the message to payee
                     message = 'Transaction Failed. Balance in A/C ' + str(accountHolder.accountNumber) + ": " + str(
                         accountHolder.balance)
 
-                    sendMessage(contactNumber=accountHolder.contactNumber, msg=message)
+                    sendMessage(contactNumber=accountHolder.contactNumber, msg=message)  # send the message to bearer
                 except:
                     message = "Transaction Failed"
 
@@ -208,7 +243,7 @@ def details(request):
                                'msg': message})
             else:
                 try:
-                    # payeeBank object
+                    # payeeBank object for entry in payee Bank Database
                     payee = payeeBank.objects.filter(accountNumber=acknowledgement[1])
                     payee = payee.values()
                     payee = list(payee)
@@ -228,7 +263,7 @@ def details(request):
                     accountHolder.balance += acknowledgement[2]
                     payee.balance -= acknowledgement[2]
 
-                    # payeeBankCheque
+                    # payeeBankCheque object for entry in payeeBank cheque database
                     payeeCheque = payeeBankCheque()
                     payeeCheque.payee = payee
                     payeeCheque.bearer = accountHolder
@@ -237,10 +272,13 @@ def details(request):
                     payeeCheque.timeDeposited = timeNow
                     payeeCheque.amount = chequeDetails.amount
 
+                    # save
                     chequeDetails.save()
                     accountHolder.save()
                     payee.save()
                     payeeCheque.save()
+
+                    # send message to bearer and payee
                     sendMessage(acknowledgement[2], accountHolder.balance, accountHolder.contactNumber,
                                 accountHolder.accountNumber)
                     sendMessage(-acknowledgement[2], payee.balance, payee.contactNumber, payee.accountNumber)
@@ -252,8 +290,8 @@ def details(request):
                                'msg': message})
 
         return redirect('ChequeClearingSystem:profile')
-    else:
-        if details is not None:
+    else:  # for get request
+        if details is not None:  # user has account registered
             message = "WELCOME " + details['name']
         else:
             message = "WELCOME"

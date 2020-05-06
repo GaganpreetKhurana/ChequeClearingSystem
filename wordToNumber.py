@@ -4,10 +4,19 @@ d = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 
 
 
 def wordToNumber(wordNumberString):
+    '''
+    Converts number in words to number
+    :param wordNumberString: Number in Words
+    :return: Number in words to number
+    '''
+    # convert to lowercase and split
     wordNumberString = wordNumberString.lower()
     wordNumberString = wordNumberString.split()
+
+    # remove 'only'
     if wordNumberString[-1] == 'only':
         wordNumberString.pop(-1)
+
     length = len(wordNumberString)
     ans = 0
     i = 0
@@ -51,6 +60,12 @@ def wordToNumber(wordNumberString):
 
 
 def convert(listString, num):
+    '''
+    Coverts number in words and multiplies it with num
+    :param listString: Number in words
+    :param num: integer to be multiplied with
+    :return: converted number
+    '''
     if len(listString) == 1:
         if listString[0] in d:
             return d[listString[0]] * num

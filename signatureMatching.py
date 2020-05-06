@@ -2,6 +2,12 @@ import cv2
 
 
 def matchSign(fromDB, fromCheque='gray_img.png'):
+    '''
+    match signature with the Database
+    :param fromDB: path of signature from Database
+    :param fromCheque: extracted signature
+    :return: bool (Matched or Not)
+    '''
     original = cv2.imread(fromDB)
     duplicate = cv2.imread(fromCheque)
     difference = cv2.subtract(original, duplicate)
@@ -10,4 +16,3 @@ def matchSign(fromDB, fromCheque='gray_img.png'):
         return True
     else:
         return False
-

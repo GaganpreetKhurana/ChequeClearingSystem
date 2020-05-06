@@ -5,6 +5,9 @@ from ChequeClearingSystem.models import bearerBankCheque, bearerBank
 
 
 class UserForm(forms.ModelForm):
+    '''
+    User Form for registering new user
+    '''
     password = forms.CharField(widget=forms.PasswordInput())
     email = forms.EmailInput()
 
@@ -21,12 +24,18 @@ class UserForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
+    '''
+    Login Form
+    '''
     username = forms.CharField(widget=forms.TextInput())
     password = forms.CharField(widget=forms.PasswordInput())
     fields = ['username', 'password']
 
 
 class AccountRegister(forms.Form):
+    '''
+    Form to register bank account with user
+    '''
     name = forms.CharField(widget=forms.TextInput())
     fatherName = forms.CharField(widget=forms.TextInput())
     email = forms.EmailField(widget=forms.EmailInput)
@@ -39,6 +48,9 @@ class AccountRegister(forms.Form):
 
 
 class chequeUpload(forms.ModelForm):
+    '''
+    Form for accepting cheque
+    '''
     cheque = forms.FileField(widget=forms.FileInput())
     accountNumber = forms.IntegerField()
 

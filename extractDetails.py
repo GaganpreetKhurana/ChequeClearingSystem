@@ -4,6 +4,19 @@ from PIL import Image
 
 # pt.pytesseract.tesseract_cmd=r'C:\Users\AKSHIT\AppData\Local\Programs\Python\Python37-32\Scripts\Tesseract.exe'
 def extractDetailsFromCheque(filePath):
+    '''
+    To extract details from the cheque
+    :param filePath: path of Cheque
+    :return: Dictionary of details extracted
+                amountInWords
+                bankName
+                chequeNumber
+                ifsc
+                date
+                name(bearer)
+                amount
+                accountNumber
+    '''
     im = Image.open(filePath)
     text = pt.image_to_string(im)
     data = text.splitlines()
