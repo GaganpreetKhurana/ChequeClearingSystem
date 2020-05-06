@@ -27,7 +27,8 @@ def sendMessage(amount=None, updatedBalance=None, contactNumber=None, accountNum
         msg = 'Last Transaction in A/C ' + str(accountNumber) + ' at ' + str(datetime.now()) + transaction + str(
             abs(amount)) + ' Balance ' + str(updatedBalance)
 
-    querystring = {"authorization": "5opOL4g8RtrVU6lHMS0nWqdQfBa7jhbAJKNCZ31czFewPXvTyxHDBQVsmeRYSlT4wW8Ov9br3UpCkgIN"
+    # enter fast2sms authorization key in authorization value
+    querystring = {"authorization": ""
         , "sender_id": "FSTSMS", "message": msg, "language": "english",
                    "route": "p", "numbers": str(contactNumber)}
 
